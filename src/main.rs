@@ -66,27 +66,18 @@ impl<'a> Iterator for FilteredWords<'a> {
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-
-            let option = self.words.next();
-
-            if option.is_some() {
-                let result = option.unwrap();
-                if result.is_ok() {
-                    let line = result.unwrap();
-                    if levenshtein(self.search_word, &line) <= self.max_distance {
-                        return Some(Ok(line));
-                    }
-                } else {
-                    let err = result.unwrap_err();
-                    return Some(Err(io::Error::new(err.kind(), err.to_string())));
-                }
-            } else {
-                return None;
+            match self.words.next() {
+                Some(r) => match r {
+                    Ok(w) => if levenshtein(self.search_word, &w) <= self.max_distance {
+                        return Some(Ok(w));
+                    },
+                    Err(e) => return Some(Err(e))
+                },
+                None => return None
             }
         }
     }
 }
-
 
 
 fn main() {
