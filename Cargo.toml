@@ -1,0 +1,9 @@
+[package]
+name = "rustlevensthein"
+version = "0.1.0"
+authors = ["Andreas Zitzelsberger <az@az82.de>"]
+edition = "2018"
+
+[dependencies]
+levenshtein = "1.0.3"
+clap = "2.32.0"
