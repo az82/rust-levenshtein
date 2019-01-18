@@ -21,7 +21,10 @@ mouse
 EOT
 ```
 
-
 ## See also
 
 - [Levenshtein Distance](https://en.wikipedia.org/wiki/Levenshtein_distance)
+
+## Status
+
+[![Build Status](https://travis-ci.org/az82/rust-levenshtein.svg?branch=master)](https://travis-ci.org/az82/rust-levenshtein)
