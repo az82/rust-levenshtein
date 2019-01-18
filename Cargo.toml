@@ -1,5 +1,5 @@
 [package]
-name = "rustlevensthein"
+name = "rust-levensthein"
 version = "0.1.0"
 authors = ["Andreas Zitzelsberger <az@az82.de>"]
 edition = "2018"
