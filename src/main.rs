@@ -1,11 +1,10 @@
 extern crate clap;
 
+mod lfilter;
 
 use clap::{Arg, App};
 use std::io::prelude::*;
 use std::io;
-use levenshtein::levenshtein;
-
 
 const SEARCH_WORD_ARG_NAME: &str = "search-word";
 const MAX_DISTANCE_ARG_NAME: &str = "max-distance";
@@ -40,50 +39,10 @@ fn parse_args() -> (String, usize) {
         matches.value_of(MAX_DISTANCE_ARG_NAME).unwrap().parse().unwrap());
 }
 
-// Return only words that are within a given levenshtein distance from a search word.
-//
-// Arguments:
-//  - words: Iterator over source words
-//  - search_word: Search word
-//  - max_distance: Max. levenshtein distance from the search word
-//
-// Returns:
-//  Iterator over the result words
-fn filter_words<'a>(words: &'a mut Iterator<Item=io::Result<String>>, search_word: &'a str, max_distance: usize) -> FilteredWords<'a> {
-    return FilteredWords { words, search_word, max_distance };
-}
-
-
-// Result iterator type for filter_lines
-struct FilteredWords<'a> {
-    words: &'a mut Iterator<Item=io::Result<String>>,
-    search_word: &'a str,
-    max_distance: usize,
-}
-
-impl<'a> Iterator for FilteredWords<'a> {
-    type Item = io::Result<String>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        loop {
-            match self.words.next() {
-                Some(r) => match r {
-                    Ok(w) => if levenshtein(self.search_word, &w) <= self.max_distance {
-                        return Some(Ok(w));
-                    },
-                    Err(e) => return Some(Err(e))
-                },
-                None => return None
-            }
-        }
-    }
-}
-
-
 fn main() {
     let (search_word, max_distance) = parse_args();
 
-    for result in filter_words(&mut io::stdin().lock().lines(), &search_word, max_distance) {
+    for result in lfilter::filter_words(&mut io::stdin().lock().lines(), &search_word, max_distance) {
         match result {
             Ok(v) => println!("{}", v),
             Err(e) => panic!(e)
