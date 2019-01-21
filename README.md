@@ -21,6 +21,13 @@ mouse
 EOT
 ```
 
+[dwyl/english-words](https://github.com/dwyl/english-words) provides a suitable list of English words:
+
+```bash
+curl https://raw.githubusercontent.com/dwyl/english-words/master/words.txt --output words.txt
+```
+
+
 ## See also
 
 - [Levenshtein Distance](https://en.wikipedia.org/wiki/Levenshtein_distance)
