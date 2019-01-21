@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 levenshtein = "1.0.3"
 clap = "2.32.0"
+num_cpus = "1.0"
