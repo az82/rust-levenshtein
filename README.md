@@ -13,6 +13,7 @@ cargo build
 
 ## Usage
 
+Serial processing:
 ```bash
 ./target/debug/rust-levensthein house <<EOT 
 tree
@@ -21,10 +22,26 @@ mouse
 EOT
 ```
 
+Parallel processing:
+```bash
+./target/debug/rust-levensthein -p house <<EOT 
+tree
+flower
+mouse
+EOT
+```
+
+Online help:
+```bash
+./target/debug/rust-levensthein --help
+```
+
 [dwyl/english-words](https://github.com/dwyl/english-words) provides a suitable list of English words:
 
 ```bash
 curl https://raw.githubusercontent.com/dwyl/english-words/master/words.txt --output words.txt
+
+ ./target/debug/rust-levensthein rustlang -d2 -p < words.txt 
 ```
 
 

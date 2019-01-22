@@ -28,13 +28,13 @@ fn parse_args() -> (String, usize, Mode) {
     let matches = App::new("Rust Levenshtein Distance")
         .version("1.0")
         .author("Andreas Zitzelsberger <az@az82.de>")
-        .about("Find all words in STDIN that have no more than a given levensthein distance from a search word")
+        .about("Find all lines in STDIN that are within a given Levensthein distance from a search word")
         .arg(Arg::with_name(SEARCH_WORD_ARG_NAME)
-            .help("The search word")
+            .help("Search word")
             .required(true)
             .index(1))
         .arg(Arg::with_name(MAX_DISTANCE_ARG_NAME)
-            .help("The maximum distance from the search string for which results are returned. Default is 1")
+            .help("Maximum distance from the search string for which results are returned")
             .short("d")
             .default_value("1")
             .validator(|s: String| -> Result<(), String> {
@@ -42,7 +42,7 @@ fn parse_args() -> (String, usize, Mode) {
                     .map_err(|e: std::num::ParseIntError| -> String{ e.to_string() })
             }))
         .arg(Arg::with_name(PARALLEL_ARG_NAME)
-            .help("The search should be run in parallel")
+            .help("Run the search in parallel mode")
             .short("p"))
         .get_matches();
 
