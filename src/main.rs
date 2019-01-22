@@ -3,21 +3,19 @@ extern crate clap;
 mod lfilter;
 mod pfilter;
 
-use clap::{Arg, App};
-use std::io::prelude::*;
+use clap::{App, Arg};
 use std::io;
+use std::io::prelude::*;
 
 const SEARCH_WORD_ARG_NAME: &str = "search-word";
 const MAX_DISTANCE_ARG_NAME: &str = "max-distance";
 const PARALLEL_ARG_NAME: &str = "parallel";
-
 
 // Run mode for the CLI executable
 enum Mode {
     SERIAL,
     PARALLEL,
 }
-
 
 // Parse the command line arguments
 //
@@ -48,19 +46,24 @@ fn parse_args() -> (String, usize, Mode) {
 
     return (
         String::from(matches.value_of(SEARCH_WORD_ARG_NAME).unwrap()),
-        matches.value_of(MAX_DISTANCE_ARG_NAME).unwrap().parse().unwrap(),
+        matches
+            .value_of(MAX_DISTANCE_ARG_NAME)
+            .unwrap()
+            .parse()
+            .unwrap(),
         match matches.is_present(PARALLEL_ARG_NAME) {
             true => Mode::PARALLEL,
-            false => Mode::SERIAL
-        });
+            false => Mode::SERIAL,
+        },
+    );
 }
 
-
 fn filter_serial(search_word: &str, max_distance: usize) {
-    for result in lfilter::filter_words(&mut io::stdin().lock().lines(), &search_word, max_distance) {
+    for result in lfilter::filter_words(&mut io::stdin().lock().lines(), &search_word, max_distance)
+    {
         match result {
             Ok(v) => println!("{}", v),
-            Err(e) => panic!(e)
+            Err(e) => panic!(e),
         }
     }
 }
@@ -71,12 +74,11 @@ fn filter_parallel(search_word: &str, max_distance: usize) {
     }
 }
 
-
 fn main() {
     let (search_word, max_distance, mode) = parse_args();
 
     match mode {
         Mode::SERIAL => filter_serial(&search_word, max_distance),
-        Mode::PARALLEL => filter_parallel(&search_word, max_distance)
+        Mode::PARALLEL => filter_parallel(&search_word, max_distance),
     }
 }

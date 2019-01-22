@@ -1,12 +1,12 @@
 extern crate num_cpus;
 
-use std::io;
-use std::thread;
-use std::sync::mpsc::{channel, Receiver, Sender};
 use levenshtein::levenshtein;
+use std::io;
+use std::sync::mpsc::{channel, Receiver, Sender};
+use std::thread;
 
 // Read all lines from the iterator into a vector.
-fn to_vec(words: &mut Iterator<Item=io::Result<String>>) -> Vec<String> {
+fn to_vec(words: &mut Iterator<Item = io::Result<String>>) -> Vec<String> {
     let mut lines = Vec::new();
 
     for word in words {
@@ -27,7 +27,11 @@ fn to_vec(words: &mut Iterator<Item=io::Result<String>>) -> Vec<String> {
 //
 // Returns:
 //  Iterator over the result words
-pub fn filter_words(words: &mut Iterator<Item=io::Result<String>>, search_word: &str, max_distance: usize) -> FilteredWords {
+pub fn filter_words(
+    words: &mut Iterator<Item = io::Result<String>>,
+    search_word: &str,
+    max_distance: usize,
+) -> FilteredWords {
     let lines = to_vec(words);
     let num_workers = num_cpus::get();
 
@@ -36,7 +40,7 @@ pub fn filter_words(words: &mut Iterator<Item=io::Result<String>>, search_word: 
     let (sender, receiver) = channel();
 
     for thread_num in 0..num_workers {
-        let slice_start =   thread_num * slice_size;
+        let slice_start = thread_num * slice_size;
         if slice_start < lines.len() {
             let slice_end = usize::min(slice_start + slice_size, lines.len());
             let words_slice = lines[slice_start..slice_end].to_vec();
@@ -57,12 +61,10 @@ pub fn filter_words(words: &mut Iterator<Item=io::Result<String>>, search_word: 
     return FilteredWords { receiver };
 }
 
-
 // Result iterator type for filter_lines
 pub struct FilteredWords {
     receiver: Receiver<String>,
 }
-
 
 impl Iterator for FilteredWords {
     type Item = String;
@@ -70,11 +72,10 @@ impl Iterator for FilteredWords {
     fn next(&mut self) -> Option<Self::Item> {
         match self.receiver.recv() {
             Ok(s) => Some(s),
-            Err(_) => None // Indicates that there are no more senders
+            Err(_) => None, // Indicates that there are no more senders
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -87,7 +88,8 @@ mod tests {
         let words = vec![
             Ok("tree".to_string()),
             Ok("flower".to_string()),
-            Ok("mouse".to_string())];
+            Ok("mouse".to_string()),
+        ];
         let words_iter = &mut words.into_iter();
 
         // When
@@ -96,7 +98,7 @@ mod tests {
         // Then
         match filtered_words.next() {
             Some(s) => assert_eq!(s, "mouse"),
-            None => panic!("assertion failed: first item should be Some(_))")
+            None => panic!("assertion failed: first item should be Some(_))"),
         }
     }
 
@@ -106,7 +108,8 @@ mod tests {
         let words = vec![
             Ok("tree".to_string()),
             Ok("flower".to_string()),
-            Ok("stone".to_string())];
+            Ok("stone".to_string()),
+        ];
         let words_iter = &mut words.into_iter();
 
         // When
@@ -126,7 +129,8 @@ mod tests {
             let words = vec![
                 Ok("tree".to_string()),
                 Ok("flower".to_string()),
-                Err(io::Error::new(io::ErrorKind::Other, ""))];
+                Err(io::Error::new(io::ErrorKind::Other, "")),
+            ];
             let mut words_iter = words.into_iter();
 
             // When
